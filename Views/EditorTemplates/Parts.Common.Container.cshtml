@@ -1,0 +1,7 @@
+﻿@* 
+ * Shape override for input fields on CustomForms. Renders the Bootstrap markup
+ * Hidden fields don't really need their own fieldset wrapper in a bootstrap form so this shoape override removes that
+ *@
+@model ContainerEditorViewModel
+@using Orchard.Core.Common.ViewModels;
+@Html.HiddenFor(m=>m.ContainerId)

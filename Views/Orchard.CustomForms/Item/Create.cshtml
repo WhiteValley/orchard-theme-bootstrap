@@ -1,0 +1,38 @@
+@*
+ * Shape override for CustomForms. Renders the Bootstrap markup
+ * Original is in \Modules\Orchard.CustomForms\Views\Item\
+ * This is the override for a custom form item and not a widget, the widget override is Parts.CustomForm.Wrapper. See http://orchard.codeplex.com/discussions/536714#post1217665
+ *@
+@using Orchard.ContentManagement
+@using Orchard.Core.Common.Models
+@using Orchard.Utility.Extensions
+@{
+    ContentItem customForm = Model.ContentItem;
+    string returnUrl = Model.ReturnUrl;
+
+    Html.AddPageClassNames("edit-" + customForm.ContentType.HtmlClassify());
+
+    // remove default Save/Publish buttons
+    Model.Zones["Sidebar"].Items.Clear();
+
+    var bodyPart = customForm.Parts.ToArray().SingleOrDefault(x => x.GetType() == typeof (BodyPart)) as BodyPart;
+}
+<article class="content-item custom-form">
+    <header>
+        @Display(New.Parts_Title().Title(Html.ItemDisplayText(customForm)))        
+    </header>
+    @if (bodyPart != null)
+    {
+        @Html.Raw(bodyPart.Text)
+    }
+    @using (Html.BeginFormAntiForgeryPost(returnUrl))
+    {
+        @Html.ValidationSummary()
+        // Model is a Shape, calling Display() so that it is rendered using the most specific template for its Shape type
+        @Display(Model)
+        <div>
+            <button type="submit" class="btn btn-primary" name="submit.Save" value="submit.Save">@T("Submit")</button>
+        </div>
+        <input type="hidden" value="@Context.Request.Url.ToString()" name="PageUrl" />
+    }
+</article>
